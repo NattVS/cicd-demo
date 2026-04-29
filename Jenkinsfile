@@ -4,7 +4,7 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = "mi-app"
+        APP_NAME = "cicd-demo"
     }
 
     stages {
