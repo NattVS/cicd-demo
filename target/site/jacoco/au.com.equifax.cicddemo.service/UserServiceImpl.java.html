@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cicd-demo</a> &gt; <a href="index.source.html" class="el_package">au.com.equifax.cicddemo.service</a> &gt; <span class="el_source">UserServiceImpl.java</span></div><h1>UserServiceImpl.java</h1><pre class="source lang-java linenums">package au.com.equifax.cicddemo.service;
+
+
+import au.com.equifax.cicddemo.domain.User;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+
+@Service
+<span class="fc" id="L12">public class UserServiceImpl implements UserService{</span>
+<span class="fc" id="L13">    private Collection&lt;User&gt; users = new ArrayList&lt;&gt;();</span>
+
+    @Override
+    public User save(User user) {
+<span class="pc bpc" id="L17" title="1 of 4 branches missed.">        if(user!=null &amp;&amp; user.getLogin() != null){</span>
+<span class="fc" id="L18">            users.add(user);</span>
+        }else{
+<span class="fc" id="L20">            throw new IllegalArgumentException();</span>
+        }
+<span class="fc" id="L22">        return user;</span>
+    }
+
+    @Override
+    public int getUsersTotal() {
+<span class="fc" id="L27">        return users.size();</span>
+    }
+
+    @Override
+    public Collection&lt;User&gt; getUsers() {
+
+<span class="fc" id="L33">        return users;</span>
+    }
+
+    @Override
+    public Optional&lt;User&gt; findById(long id) {
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        return users.stream().filter(user -&gt; (user.getId()==id)).findFirst();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

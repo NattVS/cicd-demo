@@ -14,6 +14,9 @@ import org.junit.experimental.categories.Category;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.junit.Ignore;
+
+@Ignore("Selenium hub is not available in local/basic jenkins environment")
 @Category(SystemTest.class)
 public class SeleniumExampleTest {
     private WebDriver driver;

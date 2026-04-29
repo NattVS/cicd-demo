@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+cicd-demo,au.com.equifax.cicddemo.service,UserServiceImpl,1,49,2,4,0,9,2,7,0,6
+cicd-demo,au.com.equifax.cicddemo.controller,UserController,0,42,0,0,0,10,0,4,0,4
+cicd-demo,au.com.equifax.cicddemo.controller,ConfigController,4,3,0,0,1,1,1,1,1,1
+cicd-demo,au.com.equifax.cicddemo.controller,ApiController,20,3,0,0,6,1,1,1,1,1
+cicd-demo,au.com.equifax.cicddemo,CicdDemoApplication,5,3,0,0,2,1,1,1,1,1
+cicd-demo,au.com.equifax.cicddemo.domain,EnvDetail,24,0,0,0,10,0,7,0,7,0
+cicd-demo,au.com.equifax.cicddemo.domain,User.UserBuilder,0,46,0,0,0,15,0,6,0,6
+cicd-demo,au.com.equifax.cicddemo.domain,User,17,61,4,6,1,18,5,11,1,10
