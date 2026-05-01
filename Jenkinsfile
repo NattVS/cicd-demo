@@ -16,7 +16,7 @@ pipeline {
         // PUNTO 1: Etapas básicas del pipeline
         stage('Checkout') {
             steps {
-                git 'https://github.com/helderklemp/cicd-demo.git'
+                checkout scm  // Usa el repo configurado en el job de Jenkins
             }
         }
 
@@ -28,9 +28,9 @@ pipeline {
 
         stage('Test') {
             steps {
-                // -DforkCount=0 evita que Surefire lance un JVM separado
-                // (soluciona crash por falta de memoria en Docker)
-                sh 'mvn test -DforkCount=0'
+                // -DforkCount=0: tests en mismo JVM (evita crash OOM en Docker)
+                // -Djacoco.skip=true: desactiva agente JaCoCo que conflicta con forkCount=0
+                sh 'mvn test -DforkCount=0 -Djacoco.skip=true'
             }
             post {
                 failure {
