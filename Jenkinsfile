@@ -4,7 +4,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'  // Debe coincidir con el nombre en Jenkins > Tools
+        maven 'Maven'
     }
 
     environment {
@@ -28,7 +28,14 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                // -DforkCount=0 evita que Surefire lance un JVM separado
+                // (soluciona crash por falta de memoria en Docker)
+                sh 'mvn test -DforkCount=0'
+            }
+            post {
+                failure {
+                    echo 'Tests fallaron - revisar reporte en target/surefire-reports'
+                }
             }
         }
 
