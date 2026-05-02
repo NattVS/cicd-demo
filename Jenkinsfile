@@ -49,13 +49,9 @@ pipeline {
 
         stage('Static Analysis (SonarQube)') {
             steps {
-                // Llama al token que guardaste en Jenkins
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                withSonarQubeEnv('sonarqube-server') {
                     sh '''
-                    mvn sonar:sonar \
-                    -Dsonar.projectKey=cicd-demo \
-                    -Dsonar.host.url=${SONAR_URL} \
-                    -Dsonar.login=${SONAR_TOKEN}
+                    mvn sonar:sonar -Dsonar.projectKey=cicd-demo
                     '''
                 }
             }
