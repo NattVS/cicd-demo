@@ -9,6 +9,7 @@ pipeline {
 
     environment {
         APP_NAME = "cicd-demo"
+        DOCKER_HOST = "tcp://host.docker.internal:2375"
     }
 
     stages {
