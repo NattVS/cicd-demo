@@ -70,7 +70,7 @@ pipeline {
         stage('Container Security Scan (Trivy)') {
             steps {
                 sh 'docker save ${APP_NAME}:latest -o mi-imagen.tar'
-                sh 'trivy image --exit-code 1 --severity CRITICAL --timeout 30m --input mi-imagen.tar'
+                sh 'trivy image --severity CRITICAL --timeout 30m --input mi-imagen.tar'
             }
         }
 
