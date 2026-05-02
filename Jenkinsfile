@@ -10,7 +10,6 @@ pipeline {
     environment {
         APP_NAME = "cicd-demo"
         SONAR_URL = "http://host.docker.internal:9000"
-        DOCKER_HOST = "tcp://host.docker.internal:2375"
     }
 
     stages {
