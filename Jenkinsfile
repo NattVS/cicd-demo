@@ -76,9 +76,6 @@ pipeline {
 
         // PUNTO 4.1: Despliegue en máquina local
         stage('Deploy') {
-            when {
-                branch 'master'
-            }
             steps {
                 // Detiene cualquier contenedor anterior para que el puerto 80 no dé conflicto
                 sh 'docker rm -f mi-app-container || true'
