@@ -2,17 +2,7 @@
 
 Proyecto de demostración para la construcción de un pipeline CI/CD completo usando **Jenkins**, **Docker**, **SonarQube** y **Trivy**. La aplicación base es un servicio REST en **Spring Boot**.
 
----
 
-## Requisitos previos
-
-Antes de ejecutar el pipeline, asegúrate de tener instalado y corriendo lo siguiente:
-
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) con WSL 2 habilitado
-- Git
-- Cuenta en GitHub con el repositorio forkeado
-
----
 
 ## 1. Levantar los servicios
 
@@ -41,7 +31,6 @@ docker run -d --name sonarqube -p 9000:9000 sonarqube:latest
 
 Accede en `http://localhost:9000` (usuario: `admin`, contraseña: `admin`). Luego genera un **token de autenticación** en My Account → Security.
 
----
 
 ## 2. Configurar Jenkins
 
@@ -58,7 +47,7 @@ Instalar desde **Manage Jenkins → Plugins**:
 
 En **Manage Jenkins → Tools → Maven installations**:
 - Name: `Maven`
-- ✅ Install automatically — versión `3.9.6`
+- Install automatically — versión `3.9.6`
 
 ### Credencial de SonarQube
 
@@ -92,8 +81,6 @@ docker exec -u root $(docker ps -q --filter ancestor=jenkins/jenkins:lts) bash -
    apt-get update && apt-get install -y trivy"
 ```
 
----
-
 ## 3. Crear el Job en Jenkins
 
 1. **New Item** → nombre: `cicd-demo` → tipo: **Pipeline**
@@ -106,7 +93,6 @@ docker exec -u root $(docker ps -q --filter ancestor=jenkins/jenkins:lts) bash -
 3. En **Build Triggers**: activar **Poll SCM** con expresión `* * * * *` para detección automática de commits
 4. Guardar y ejecutar **Build Now**
 
----
 
 ## 4. Descripción del Pipeline
 
@@ -125,8 +111,6 @@ El pipeline declarativo (`Jenkinsfile`) ejecuta las siguientes etapas en orden:
 
 El bloque `post` limpia el workspace (`cleanWs()`) y las imágenes huérfanas (`docker image prune -f`) al finalizar cada ejecución, independientemente del resultado.
 
----
-
 ## 5. Variables de entorno del Jenkinsfile
 
 | Variable | Valor | Descripción |
@@ -134,14 +118,11 @@ El bloque `post` limpia el workspace (`cleanWs()`) y las imágenes huérfanas (`
 | `APP_NAME` | `cicd-demo` | Nombre de la imagen Docker |
 | `DOCKER_HOST` | `tcp://host.docker.internal:2375` | Conexión al daemon Docker del host desde el contenedor Jenkins |
 
----
-
 ## 6. Comportamiento del Gatekeeping
 
 - **Quality Gate (SonarQube):** Si se detecta un Security Hotspot, el pipeline se aborta antes del deploy.
 - **Trivy:** Si se detectan vulnerabilidades `CRITICAL`, el pipeline falla con exit code 1. Para omitir temporalmente este bloqueo (ej. pruebas de deploy), retirar el flag `--exit-code 1` del stage `Container Security Scan`.
 
----
 
 ## Estructura del proyecto
 
