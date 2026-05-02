@@ -9,6 +9,7 @@ pipeline {
 
     environment {
         APP_NAME = "cicd-demo"
+        SONAR_URL = "http://host.docker.internal:9000"
         DOCKER_HOST = "tcp://host.docker.internal:2375"
     }
 
@@ -29,8 +30,6 @@ pipeline {
 
         stage('Test') {
             steps {
-                // -DforkCount=0: tests en mismo JVM (evita crash OOM en Docker)
-                // -Djacoco.skip=true: desactiva agente JaCoCo que conflicta con forkCount=0
                 sh 'mvn test -DforkCount=0 -Djacoco.skip=true'
             }
             post {
@@ -46,40 +45,65 @@ pipeline {
             }
         }
 
-        // PUNTO 2: Etapas avanzadas de calidad y seguridad
+        // PUNTO 2 y 3.1: Etapas avanzadas de calidad y seguridad y Análisis Estático con Autenticación  
+
         stage('Static Analysis (SonarQube)') {
             steps {
-                sh '''
-                mvn sonar:sonar \
-                -Dsonar.projectKey=cicd-demo \
-                -Dsonar.host.url=http://sonarqube:9000
-                '''
+                // Llama al token que guardaste en Jenkins
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                    mvn sonar:sonar \
+                    -Dsonar.projectKey=cicd-demo \
+                    -Dsonar.host.url=${SONAR_URL} \
+                    -Dsonar.login=${SONAR_TOKEN}
+                    '''
+                }
             }
         }
 
+        // PUNTO 3.3: Puerta de Calidad (Gatekeeping)
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    // Detiene el pipeline si Sonarqube encuentra errores críticos
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        // PUNTO 3.2: Escaneo de Seguridad
         stage('Container Security Scan (Trivy)') {
             steps {
                 sh 'trivy image --exit-code 1 --severity CRITICAL ${APP_NAME}:latest'
             }
         }
 
+        // PUNTO 4.1: Despliegue en máquina local
         stage('Deploy') {
             when {
-                branch 'main'
+                branch 'master'
             }
             steps {
-                sh 'docker run -d -p 80:8080 ${APP_NAME}:latest'
+                // Detiene cualquier contenedor anterior para que el puerto 80 no dé conflicto
+                sh 'docker rm -f mi-app-container || true'
+                sh 'docker run -d --name mi-app-container -p 80:8080 ${APP_NAME}:latest'
             }
         }
     }
 
     post {
+        // PUNTO 3.4 y 4.2: Limpieza e Infraestructura/Notif
         always {
             echo 'Limpiando entorno...'
             cleanWs()
+            // Elimina imgs huérfanas de Docker 
+            sh 'docker image prune -f'
+        }
+        success {
+            echo 'Pipeline completado con éxito. Aplicación desplegada.'
         }
         failure {
-            echo 'Pipeline falló. Revisar logs para más detalles.'
+            echo 'Pipeline falló. Revisar logs de SonarQube o Trivy para más detalles.'
         }
     }
 }
