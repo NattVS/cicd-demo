@@ -69,7 +69,8 @@ pipeline {
         // PUNTO 3.2: Escaneo de Seguridad
         stage('Container Security Scan (Trivy)') {
             steps {
-                sh 'trivy image --exit-code 1 --severity CRITICAL ${APP_NAME}:latest'
+                sh 'docker save ${APP_NAME}:latest -o mi-imagen.tar'
+                sh 'trivy image --exit-code 1 --severity CRITICAL --input mi-imagen.tar'
             }
         }
 
